@@ -2,6 +2,15 @@ import { User } from "../models/User.js";
 import jwt from 'jsonwebtoken';
 
 
+/**********************************************************************************************************************
+ * validateUser - Middleware to validate user authentication.
+ * It checks for a JWT token in the cookies, verifies it,
+ * and retrieves the user from the database based on the identityId.
+ * If the user is found, it attaches the user object to the request and calls next().
+ * If the token is missing or invalid, it returns a 401 Unauthorized response.
+ * If the user is not found, it returns a 400 Bad Request response.
+ * If an error occurs, it returns a 500 Internal Server Error response.
+ **********************************************************************************************************************/
 export const validateUser = async (req, res, next) => {
     try {
         console.log("cookies - ", req);

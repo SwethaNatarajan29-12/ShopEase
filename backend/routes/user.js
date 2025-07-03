@@ -1,6 +1,6 @@
 import express from "express";
 import { validateUser } from "../middleware/validateUser.js";
-import { getProfile, login, register, updateProfile } from "../controller/userController.js";
+import { getProfile, login, logout, register, updateProfile } from "../controller/userController.js";
 
 const router = express.Router();
 
@@ -17,10 +17,6 @@ router.get("/profile", validateUser, getProfile);
 router.put("/profile", validateUser, updateProfile);
 
 // Logout
-router.post("/logout", (req, res) => {
-  // Clear the auth cookie (adjust name if needed)
-  res.clearCookie("x-ecom-jwt", { path: "/", httpOnly: true, sameSite: "lax" });
-  res.status(200).json({ message: "Logged out successfully" });
-});
+router.post("/logout", validateUser, logout);
 
 export default router;
