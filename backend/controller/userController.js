@@ -3,6 +3,14 @@ import bcrypt from "bcrypt";
 import { generateJWTtoken, generateIdentityId } from "../utils/helper.js";
 let scope = "userController";
 
+
+/******************************************************************************
+ * register - Handles user registration with username, email, and password.
+ * It checks for existing usernames and emails, hashes the password,
+ * generates an identity ID, and saves the user to the database.
+ * If successful, it generates a JWT token and returns the user object 
+ * (excluding password) in the response.
+ ******************************************************************************/
 export const register = async (req, res) => {
     let method = "register";
     try {
@@ -11,7 +19,7 @@ export const register = async (req, res) => {
 
         const existingUserName = await User.findOne({ username });
 
-        if(existingUserName) {
+        if (existingUserName) {
             return res.status(400).json({ statusCode: 400, message: 'Username already exists' });
         }
 
@@ -48,6 +56,14 @@ export const register = async (req, res) => {
     }
 }
 
+
+/*******************************************************************************
+ * login - Handles user login by validating the email and password.
+ * It checks if the user exists, verifies the password,
+ * otherwise returns an error message.
+ * If successful, it generates a JWT token and returns the user object
+ * (excluding password) in the response.
+ ********************************************************************************/
 export const login = async (req, res) => {
     let method = "login";
     try {
@@ -76,15 +92,19 @@ export const login = async (req, res) => {
 
 }
 
-//get profile
-// This function retrieves the user profile by ID and excludes the password field from the response.
-// It handles errors and returns a 404 status if the user is not found.
+/*******************************************************************************************
+ * getProfile - Retrieves the profile of the currently logged-in user.
+ * It uses the identityId from the request user object to find the user in the database.
+ * If the user is found, it returns the user object (excluding password).
+ * If the user is not found, it returns a 404 error.
+ * If an error occurs, it returns a 500 error with the error message.
+ *********************************************************************************************/
 export const getProfile = async (req, res) => {
     let method = "getProfile";
     try {
         const identityId = req.user?.identityId;
-        const user = await User.findOne({identityId}).select("-password");
-        if(!user) {
+        const user = await User.findOne({ identityId }).select("-password");
+        if (!user) {
             return res.status(404).json({ error: "User not found" });
         }
         console.log("user from getProfile - ", user);
@@ -95,7 +115,14 @@ export const getProfile = async (req, res) => {
 }
 
 
-// Update profile
+/*************************************************************************************************************************
+ * updateProfile - Updates the profile of a user by their ID.
+ * It allows updating the mobile number and image(for upload image wants to implement cloudinary or any other package).
+ * currently replaced the image with dummy user image.
+ * If the user is found, it updates the fields and returns the updated user object (excluding password).
+ * If the user is not found, it returns a 404 error.
+ * If an error occurs, it returns a 500 error with the error message.
+ ***************************************************************************************************************************/
 export const updateProfile = async (req, res) => {
     let method = "updateProfile";
     try {
@@ -105,13 +132,28 @@ export const updateProfile = async (req, res) => {
             { mobile, image },
             { new: true }
         ).select("-password");
-        
+
         if (!user) {
             return res.status(404).json({ error: "User not found" });
         }
-        
+
         res.status(200).json(user);
     } catch (error) {
-        res.status(500).json({ statusCode: 500,scope, method, error: error.message || "Internal server error" });
+        res.status(500).json({ statusCode: 500, scope, method, error: error.message || "Internal server error" });
+    }
+}
+
+/***************************************************************************************
+ * logout - Handles user logout by clearing the authentication cookie.
+ * It clears the auth cookie and returns a success message.
+ ***************************************************************************************/
+export const logout = async (req, res) => {
+    try {
+        // Clear the auth cookie (adjust name if needed)
+        res.clearCookie("x-ecom-jwt", { path: "/", httpOnly: true, sameSite: "lax" });
+        res.status(200).json({ message: "Logged out successfully" });
+    } catch (error) {
+        console.log("error from logout - ", error);
+        res.status(500).json({ statusCode: 500, scope, method: "logout", error: error?.message || "Internal server error" });
     }
 }
