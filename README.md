@@ -1,5 +1,5 @@
 ## MERN Stack Project:  ShopEase
-#ShopEase
+# ShopEase Tech Stack - Reactjs, Tailwindcss, Stripe, Recharges  Nodejs, Expressjs, Mongodb
 
 ## Features
 Sign Up and SignIn User
