@@ -30,7 +30,7 @@ const SignIn = () => {
       // navigate removed: redirect handled by useEffect
     } catch (err) {
       let backendMsg = typeof err === "string" ? err : "";
-      console.log('Login error:', err, 'backendMsg:', backendMsg); // Debug log
+      // console.log('Login error:', err, 'backendMsg:', backendMsg); // Debug log
       if (backendMsg) {
         setError(backendMsg);
       } else {

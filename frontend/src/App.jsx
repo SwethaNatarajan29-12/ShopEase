@@ -176,14 +176,3 @@ function App() {
 }
 
 export default App;
-
-/* Add this to your global CSS (e.g., index.css) for the slide-in animation: */
-/*
-@keyframes slide-in-left {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(0); }
-}
-.animate-slide-in-left {
-  animation: slide-in-left 0.3s cubic-bezier(0.4,0,0.2,1) both;
-}
-*/
